@@ -1,7 +1,7 @@
 djorm-ext-pool
 ==============
 
-DB-API2 connection poolling for django.
+DB-API2 connection poolling for Django.
 
 Description
 -----------

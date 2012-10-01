@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
 description="""
-Expressions module of django orm extensions package (collection of third party plugins build in one unified package).
+DB-API2 connection pool for Django (for postgresql, mysql and sqlite)
 """
 
 setup(
-    name = "djorm-ext-expressions",
-    version = ':versiontools:djorm_expressions:',
-    url = 'https://github.com/niwibe/djorm-ext-expressions',
+    name = "djorm-ext-pool",
+    version = '0.4.0',
+    url = 'https://github.com/niwibe/djorm-ext-pool',
     license = 'BSD',
     platforms = ['OS Independent'],
     description = description.strip(),
@@ -18,10 +18,7 @@ setup(
     packages = find_packages(),
     include_package_data = False,
     install_requires = [
-        'djorm-ext-core >= 4.0',
-    ],
-    setup_requires = [
-        'versiontools >= 1.9',
+        'sqlalchemy >= 0.7.5',
     ],
     zip_safe = False,
     classifiers = [
