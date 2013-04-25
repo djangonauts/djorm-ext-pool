@@ -6,7 +6,7 @@ DB-API2 connection pool for Django (for postgresql, mysql and sqlite)
 
 setup(
     name = "djorm-ext-pool",
-    version = '0.6',
+    version = '0.7',
     url = 'https://github.com/niwibe/djorm-ext-pool',
     license = 'BSD',
     platforms = ['OS Independent'],

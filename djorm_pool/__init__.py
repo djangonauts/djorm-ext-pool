@@ -1,20 +1,42 @@
-from sqlalchemy import event
-from sqlalchemy.pool import manage, QueuePool
+# -*- coding: utf-8 -*-
+
+from functools import partial
+
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 
-import logging
-from functools import partial
+from sqlalchemy import exc
+from sqlalchemy import event
+from sqlalchemy.pool import manage
+from sqlalchemy.pool import Pool
 
-log = logging.getLogger('djorm.pool')
-_log = lambda msg, *args: log.debug(msg)
 
+# Activate logging on django debgu mode is ON
 if settings.DEBUG:
-    event.listen(QueuePool, 'checkout', partial(_log, 'retrieved from pool'))
-    event.listen(QueuePool, 'checkin', partial(_log, 'returned to pool'))
-    event.listen(QueuePool, 'connect', partial(_log, 'new connection'))
+    import logging
+    log = logging.getLogger('djorm.pool')
+    _log = lambda msg, *args: log.debug(msg)
+    event.listen(Pool, 'checkout', partial(_log, 'retrieved from pool'))
+    event.listen(Pool, 'checkin', partial(_log, 'returned to pool'))
+    event.listen(Pool, 'connect', partial(_log, 'new connection'))
+
+
+if getattr(settings, "DJORM_POOL_PESSIMISTIC", False):
+    @event.listens_for(Pool, "checkout")
+    def ping_connection(dbapi_connection, connection_record, connection_proxy):
+        cursor = dbapi_connection.cursor()
+        try:
+            cursor.execute("SELECT 1")
+        except:
+            # raise DisconnectionError - pool will try
+            # connecting again up to three times before raising.
+            raise exc.DisconnectionError()
+        cursor.close()
+
 
 POOL_SETTINGS = getattr(settings, 'DJORM_POOL_OPTIONS', {})
+POOL_SETTINGS.setdefault("recycle", 3600)
+
 
 def patch_mysql():
     class hashabledict(dict):
