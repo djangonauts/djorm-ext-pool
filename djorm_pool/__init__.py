@@ -68,7 +68,7 @@ def patch_mysql():
 
     try:
         from django.db.backends.mysql import base as mysql_base
-    except ImproperlyConfigured:
+    except (ImproperlyConfigured, ImportError) as e:
         return
 
     if not hasattr(mysql_base, "_Database"):
@@ -79,7 +79,7 @@ def patch_mysql():
 def patch_postgresql():
     try:
         from django.db.backends.postgresql_psycopg2 import base as pgsql_base
-    except ImproperlyConfigured:
+    except (ImproperlyConfigured, ImportError) as e:
         return
 
     if not hasattr(pgsql_base, "_Database"):
@@ -90,7 +90,7 @@ def patch_postgresql():
 def patch_sqlite3():
     try:
         from django.db.backends.sqlite3 import base as sqlite3_base
-    except ImproperlyConfigured:
+    except (ImproperlyConfigured, ImportError) as e:
         return
 
     if not hasattr(sqlite3_base, "_Database"):
