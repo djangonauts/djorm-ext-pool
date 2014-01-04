@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 from functools import partial
 
 from django.core.exceptions import ImproperlyConfigured
@@ -9,21 +10,21 @@ from sqlalchemy import exc
 from sqlalchemy import event
 from sqlalchemy.pool import manage
 from sqlalchemy.pool import Pool
+from sqlalchemy.event import listens_for
 
 
-# Activate logging on django debgu mode is ON
-if settings.DEBUG:
-    import logging
-    log = logging.getLogger('djorm.pool')
-    _log = lambda msg, *args: log.debug(msg)
-    event.listen(Pool, 'checkout', partial(_log, 'retrieved from pool'))
-    event.listen(Pool, 'checkin', partial(_log, 'returned to pool'))
-    event.listen(Pool, 'connect', partial(_log, 'new connection'))
+POOL_PESSIMISTIC_MODE = getattr(settings, "DJORM_POOL_PESSIMISTIC", False)
+POOL_SETTINGS = getattr(settings, 'DJORM_POOL_OPTIONS', {})
+POOL_SETTINGS.setdefault("recycle", 3600)
+
+logger = logging.getLogger('djorm.pool')
 
 
-if getattr(settings, "DJORM_POOL_PESSIMISTIC", False):
-    @event.listens_for(Pool, "checkout")
-    def ping_connection(dbapi_connection, connection_record, connection_proxy):
+@event.listens_for(Pool, "checkout")
+def _on_checkout(dbapi_connection, connection_record, connection_proxy):
+    logger.debug("connection retrieved from pool")
+
+    if POOL_PESSIMISTIC_MODE:
         cursor = dbapi_connection.cursor()
         try:
             cursor.execute("SELECT 1")
@@ -31,11 +32,18 @@ if getattr(settings, "DJORM_POOL_PESSIMISTIC", False):
             # raise DisconnectionError - pool will try
             # connecting again up to three times before raising.
             raise exc.DisconnectionError()
-        cursor.close()
+        finally:
+            cursor.close()
 
 
-POOL_SETTINGS = getattr(settings, 'DJORM_POOL_OPTIONS', {})
-POOL_SETTINGS.setdefault("recycle", 3600)
+@event.listens_for(Pool, "checkin")
+def _on_checkin(*args, **kwargs):
+    logger.debug("connection returned to pool")
+
+
+@event.listens_for(Pool, "connect")
+def _on_connect(*args, **kwargs):
+    logger.debug("connection created")
 
 
 def patch_mysql():
