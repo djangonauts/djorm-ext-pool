@@ -72,6 +72,15 @@ def patch_mysql():
                             v = hashablelist(v)
                         items.append((k, v))
                     kwargs['conv'] = hashabledict(items)
+            if 'ssl' in kwargs:
+                ssl = kwargs['ssl']
+                if isinstance(ssl, dict):
+                    items = []
+                    for k, v in ssl.items():
+                        if isinstance(v, list):
+                            v = hashablelist(v)
+                        items.append((k, v))
+                    kwargs['ssl'] = hashabledict(items)
             return self.manager.connect(*args, **kwargs)
 
     try:
