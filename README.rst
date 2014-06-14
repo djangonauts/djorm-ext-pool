@@ -53,10 +53,3 @@ Also, can activate the pessimistic connection handling with **DJORM_POOL_PESSIMI
     # With this settings, every checkout of a connection from a pool
     # executes an additional query for check the connection state.
     DJORM_POOL_PESSIMISTIC = True
-
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/djangonauts/djorm-ext-pool/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
-
