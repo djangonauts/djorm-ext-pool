@@ -1,6 +1,21 @@
 Changelog
 =========
 
+Version 0.8.2
+-------------
+
+- Add ssl support for mysql (by @danigosa)
+
+Version 0.8.1
+-------------
+
+Fix compatibility with sqlalchemy >= 0.9
+
+Version 0.8
+-----------
+
+- Minor fixes on imports.
+
 Version 0.7
 -----------
 
