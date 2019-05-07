@@ -18,7 +18,7 @@ setup(
     packages = find_packages(),
     include_package_data = False,
     install_requires = [
-        'sqlalchemy >= 0.7.5',
+        'sqlalchemy >= 1.3.3',
     ],
     zip_safe = False,
     classifiers = [
