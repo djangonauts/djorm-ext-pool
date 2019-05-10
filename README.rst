@@ -6,7 +6,7 @@ DB-API2 connection poolling for Django.
 Description
 -----------
 
-Is a simple application that uses the excellent SQLAlchemy connection pool to incorporate a it to django. All work is based on https://github.com/kennethreitz/django-postgrespool/
+Is a simple application that uses the excellent SQLAlchemy connection pool to incorporate a it to django. All work is based on https://github.com/heroku-python/django-postgrespool/
 
 **Note:** currently only been tested with postgresql, but in theory it should work perfectly with mysql and sqlite3.
 
