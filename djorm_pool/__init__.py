@@ -95,7 +95,7 @@ def patch_mysql():
 
 def patch_postgresql():
     try:
-        from django.db.backends.postgresql_psycopg2 import base as pgsql_base
+        from django.db.backends.postgresql import base as pgsql_base
     except (ImproperlyConfigured, ImportError) as e:
         return
 
